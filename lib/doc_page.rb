@@ -15,6 +15,7 @@ class DocPage < Html5Page
   def head_content
     title page_title
     script :src => firebase_javascript_url
+    script :src => q_javascript_url
     script :src => "/assets/application.js"
     link   :href => "/assets/application.css", :rel => "stylesheet"
   end
@@ -47,6 +48,10 @@ class DocPage < Html5Page
 
   def firebase_javascript_url
     "https://cdn.firebase.com/js/client/2.2.9/firebase.js"
+  end
+
+  def q_javascript_url
+    "https://cdnjs.cloudflare.com/ajax/libs/q.js/1.4.1/q.js"
   end
 
   def src_url

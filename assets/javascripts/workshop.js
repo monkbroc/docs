@@ -2,23 +2,33 @@ $(function() {
   var group;
   if(group = Cookies.get("group")) {
     var workshopRef = new Firebase("https://amber-inferno-5127.firebaseio.com/" + location.host + "/" + group + "/");
-    var lessonRef = workshopRef.child(location.pathname);
-    var user = getUser();
+    var pageRef = workshopRef.child(location.pathname);
+    var user;
 
-    lessonRef.once("value", function(steps) {
-      steps.forEach(populateCheckbox);
-      trackCheckboxChanges();
-    });
+    authUser().
+      then(setUser).
+      then(loadCheckboxValues).
+      then(populateCheckboxes).
+      then(trackCheckboxChanges).
+      done();
 
-    function getUser() {
-      var user = Cookies.get("user");
-      if(!user) {
-        var userRef = workshopRef.child('users').push();
-        user = userRef.key();
-        userRef.set("student");
-        Cookies.set("user", user);
-      }
-      return user;
+    function authUser() {
+      // Promise-ify the call to workshopRef.authAnonymously(function(error, authData) { })
+      return Q.ninvoke(workshopRef, "authAnonymously");
+    }
+
+    function setUser(authData) {
+      user = authData.uid;
+    }
+
+    function loadCheckboxValues() {
+      return new Promise(function (fulfill) {
+        pageRef.once("value", fulfill);
+      });
+    }
+
+    function populateCheckboxes(steps) {
+      return steps.forEach(populateCheckbox);
     }
 
     function populateCheckbox(step) {
@@ -27,7 +37,7 @@ $(function() {
       if(!el) {
         return;
       }
-      var done = step.child("users/" + user).val() === "done";
+      var done = step.child("students/" + user).val() === "done";
       el.checked = done;
     }
 
@@ -35,9 +45,9 @@ $(function() {
       $(".big_checkbox").on("change", function() {
         var step = $(this).parent().text().trim();
         var done = this.checked;
-        var stepRef = lessonRef.child(this.id);
+        var stepRef = pageRef.child(this.id);
         stepRef.update({ name: step });
-        stepRef.child("users/" + user).set(done ? "done" : null);
+        stepRef.child("students/" + user).set(done ? "done" : null);
       });
     }
   }
