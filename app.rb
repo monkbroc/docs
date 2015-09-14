@@ -15,6 +15,7 @@ $: << lib
 
 require "doc_page"
 require "step_page"
+require "instructor_page"
 require "markdown_page"
 require "media_wiki_page"
 require "raw_page"
@@ -195,6 +196,13 @@ class InstallFest < Sinatra::Application   # todo: use Sinatra::Base instead, wi
     end
   end
 
+  def render_instructor
+    options = {
+      site_name: params[:site],
+    }
+    InstructorPage.new(options).to_html
+  end
+
   def render_deck
     slides = Deck::Slide.split(src)
     Deck::SlideDeck.new(:slides => slides).to_pretty
@@ -257,6 +265,10 @@ class InstallFest < Sinatra::Application   # todo: use Sinatra::Base instead, wi
     set_group_cookie params[:group], params[:site]
     params[:name] = params[:site]
     render_page
+  end
+
+  get "/:site/instructor" do
+    render_instructor
   end
 
   get "/:site/:name.zip" do
