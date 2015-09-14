@@ -137,3 +137,6 @@ DEPENDENCIES
   sinatra-contrib (~> 1.4.0)
   sprockets
   thin
+
+BUNDLED WITH
+   1.10.6

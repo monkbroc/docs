@@ -1,4 +1,6 @@
 //= require 'jquery'
+//= require 'js.cookie'
 //= require 'doc_page'
+//= require 'workshop'
 //= require 'bootstrap/dropdown'
 //= require 'analytics'

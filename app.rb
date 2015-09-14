@@ -200,6 +200,15 @@ class InstallFest < Sinatra::Application   # todo: use Sinatra::Base instead, wi
     Deck::SlideDeck.new(:slides => slides).to_pretty
   end
 
+  def set_group_cookie(group, site)
+    expire_in_days = 7
+    response.set_cookie "group",
+      value: group,
+      max_age: expire_in_days * 60 * 60 * 24,
+      path: "/#{site}",
+      domain: settings.environment == :development ? nil : request.host
+  end
+
   before do
     expires 3600, :public
   end
@@ -242,6 +251,12 @@ class InstallFest < Sinatra::Application   # todo: use Sinatra::Base instead, wi
       p e
       halt 404
     end
+  end
+
+  get "/:site/join/:group" do
+    set_group_cookie params[:group], params[:site]
+    params[:name] = params[:site]
+    render_page
   end
 
   get "/:site/:name.zip" do
