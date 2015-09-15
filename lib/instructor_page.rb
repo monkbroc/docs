@@ -44,7 +44,11 @@ class InstructorPage < Html5Page
 
     main {
       h1 page_title, class: "doc_title"
-      div(id: "instructor", class: :doc)
+      div(id: "instructor", class: :doc) {
+        h2 class: "presence"
+        div class: "topics"
+      }
+
     }
   end
 

@@ -271,6 +271,11 @@ class InstallFest < Sinatra::Application   # todo: use Sinatra::Base instead, wi
     render_instructor
   end
 
+  get "/:site/instructor/:group" do
+    set_group_cookie params[:group], params[:site]
+    render_instructor
+  end
+
   get "/:site/:name.zip" do
     manifest_path = "#{site_dir}/#{params[:name]}.zip-manifest"
     if File.exists?(manifest_path)
